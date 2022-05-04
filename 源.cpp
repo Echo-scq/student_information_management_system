@@ -1,324 +1,404 @@
 #include<iostream>
+#include<cstdio>
+#include<cstring>
+
+#define Frame1 "     ----------------------å­¦ç”Ÿæˆç»©-----------------------\n"
+#define Frame2 "     |    å­¦å·    |   å§“å   | è¯­æ–‡ | æ•°å­¦ | è‹±è¯­ | æ€»åˆ† |\n"
+#define Frame3 "     |------------|----------|------|------|------|------|\n"
+#define Frame4 "     -----------------------------------------------------\n"
+#define Format "     |%10s  |%10s|%6d|%6d|%6d|%6d|\n"
+
 using namespace std;
-#define max 100
 
-struct Student {  // Ñ§ÉúĞÅÏ¢½á¹¹Ìå
-	char id[8];
-	char name[20];
-	int Math_score;
-	int English_score;
-}stu[max];
-
-int num;//Ñ§ÉúÈËÊı
-
-void printf_menu()//¶Ô²Ëµ¥½øĞĞÊä³ö
+typedef struct Grade
 {
-	cout << "************************************" << endl;
-	cout << "****--»¶Ó­Ê¹ÓÃ½ÌÎñ¹ÜÀíÏµÍ³--********" << endl;
-	cout << "****    ***´´½¨Ñ§ÉúĞÅÏ¢¿â***    ****" << endl;
-	cout << "****   1.ÊäÈëÑ§ÉúĞÅÏ¢           ****" << endl;
-	cout << "****   2.ÏÔÊ¾ÏÖÓĞÑ§ÉúÊı¾İ       ****" << endl;
-	cout << "****   3.°´ĞÕÃû²éÑ¯Ñ§ÉúĞÅÏ¢     ****" << endl;
-	cout << "****   4.°´Ñ§ºÅ²éÑ¯             ****" << endl;
-	cout << "****   5.É¾³ıÑ§ÉúĞÅÏ¢           ****" << endl;
-	cout << "****   6.°´ÕÕÑ§Éú³É¼¨½øĞĞÅÅĞò   ****" << endl;
-	cout << "****   7.²åÈëÑ§ÉúĞÅÏ¢           ****" << endl;
-	cout << "****   8.½«ÏÖÓĞÑ§ÉúĞÅÏ¢½øĞĞ±£´æ ****" << endl;
-	cout << "****     ***Ñ§ÉúĞÅÏ¢Î¬»¤***     ****" << endl;
-	cout << "****   9.Ôö¼ÓÑ§ÉúĞÅÏ¢           ****" << endl;
-	cout << "****   10.É¾³ıÑ§ÉúĞÅÏ¢          ****" << endl;
-	cout << "****   11.ĞŞ¸ÄÑ§ÉúĞÅÏ¢          ****" << endl;
-	cout << "****   12.ÍË³ö³ÌĞò              ****" << endl;
-	cout << "************************************" << endl;
-	cout << endl;
+    char id[10];    //å­¦å·
+    char name[8];  //å§“å
+    int score[4];      //a[0]ã€a[1]ã€a[2]ã€a[3]åˆ†åˆ«å­˜è¯­æ–‡ã€æ•°å­¦ã€è‹±è¯­ä¸‰ç§‘æˆç»©å’Œæ€»åˆ†ï¼Œç”¨æ•°ç»„ä¾¿äºåé¢çš„é€‰æ‹©æ“ä½œã€‚
+} Student;
+
+typedef struct LNode
+{
+    Student stu;         //æ•°æ®åŸŸï¼Œä¸ºç»“æ„ä½“ç±»å‹ï¼Œç”¨äºå­˜æ”¾å­¦å·ã€å§“åã€ä¸‰ç§‘æˆç»©å’Œæ€»åˆ†
+    struct LNode *next;  //æŒ‡é’ˆåŸŸï¼ŒæŒ‡å‘ä¸‹ä¸€ä¸ªç»“ç‚¹
+} LNode,*LinkList;
+
+void printf_menu()    //èœå•
+{
+    printf("                   å­¦ç”Ÿæˆç»©ç®¡ç†ç³»ç»Ÿ               \n");
+    printf("    *********************èœå•*********************\n");
+    printf("    *    1.åˆ›å»ºå­¦ç”Ÿä¿¡æ¯         2.åˆ é™¤å­¦ç”Ÿä¿¡æ¯   *\n");
+    printf("    *    3.æŸ¥è¯¢å­¦ç”Ÿä¿¡æ¯         4.ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯   *\n");
+    printf("    *    5.å¢åŠ å­¦ç”Ÿä¿¡æ¯         6.ç»Ÿè®¡å­¦ç”Ÿä¿¡æ¯   *\n");
+    printf("    *    7.æ’åºå­¦ç”Ÿèµ„æ–™         8.è¾“å‡ºå­¦ç”Ÿä¿¡æ¯   *\n");
+    printf("    *    9.ä»æ–‡ä»¶è¯»å…¥å­¦ç”Ÿä¿¡æ¯   10.ä¿å­˜å­¦ç”Ÿä¿¡æ¯  *\n");
+    printf("    *    11.å¸®åŠ©                12.é€€å‡ºç³»ç»Ÿ      *\n");
+    printf("    **********************************************\n");
+    cout << endl;
 }
 
-void Input_Date()//¶ÔÑ§ÉúĞÅÏ¢½øĞĞÊäÈë
+void print_Node(LNode *p)//è¾“å‡ºæŸä¸€ä¸ªå­¦ç”Ÿçš„ä¿¡æ¯
 {
-	int n;
-	cout << "ÇëÊäÈëÑ§ÉúÈËÊı£º";
-	cin >> n;
-	for (int i = 1; i <= n; i++)
-	{
-		printf("ÇëÊäÈëµÚ%d¸öÈËµÄÑ§ºÅ:", i);
-		scanf_s("%s", &stu[i].id, 8);
-		printf("ÇëÊäÈëµÚ%d¸öÈËµÄÃû×Ö:", i);
-		scanf_s("%s", &stu[i].name, 20);
-		printf("ÇëÊäÈëµÚ%d¸öÈËµÄÊıÑ§³É¼¨:", i);
-		scanf_s("%d", &stu[i].Math_score);
-		printf("ÇëÊäÈëµÚ%d¸öÈËµÄÓ¢Óï³É¼¨:", i);
-		scanf_s("%d", &stu[i].English_score);
-		printf("\n");
-	}
-	num = n;
-	putchar('\n');
+    printf(Frame1);
+    printf(Frame2);
+    printf(Frame3);
+    printf(Format,p->stu.id,p->stu.name,p->stu.score[0],p->stu.score[1],p->stu.score[2],p->stu.score[3]);//è¾“å‡ºå­¦ç”Ÿä¿¡æ¯
+    printf(Frame4);
 }
 
-void Put_Date()//½«ÏÖÓĞÑ§ÉúĞÅÏ¢½øĞĞÊä³ö
+void PrintList(LinkList L)//å°†æ‰€æœ‰çš„å­¦ç”Ÿä¿¡æ¯è¾“å‡º
 {
-	if (num <= 0)
-	{
-		cout << "¸ÃÏµÍ³ÖĞÃ»ÓĞÑ§ÉúĞÅÏ¢" << endl;
-		return;
-	}
-	cout << "Ñ§ºÅ     ĞÕÃû     ÊıÑ§     Ó¢Óï" << endl;
-	for (int i = 1; i <= num; i++)
-	{
-		printf("%-9s%-9s%-9d%-9d\n", stu[i].id, stu[i].name, stu[i].Math_score, stu[i].English_score);
-	}
-	putchar('\n');
+    printf("ç°åœ¨çš„å­¦ç”Ÿä¿¡æ¯å¦‚ä¸‹ï¼š\n");
+    LNode *p=L->next;
+    printf(Frame1);
+    printf(Frame2);
+    printf(Frame3);
+    while(p)
+    {
+        printf(Format,p->stu.id,p->stu.name,p->stu.score[0],p->stu.score[1],p->stu.score[2],p->stu.score[3]);
+        printf(Frame4);
+        p=p->next;
+    }
 }
 
-void search_name()//°´ÕÕÑ§ÉúĞÕÃû½øĞĞ²éÑ¯
+void CreateList(LinkList &L)
 {
-	cout << "ÇëÊäÈëÄãÒª²éÑ¯µÄÑ§ÉúµÄĞÕÃû£º";
-	char name[20];
-	cin >> name;
-	for (int i = 1; i <= num; i++)
-	{
-		if (strcmp(stu[i].name, name) == 0)
-		{
-			cout << "Ñ§ºÅ     ĞÕÃû     ÊıÑ§     Ó¢Óï" << endl;
-			printf("%-9s%-9s%-9d%-9d\n", stu[i].id, stu[i].name, stu[i].Math_score, stu[i].English_score);
-		}
-	}
-	putchar('\n');
+    int n;
+    cout<<"è¯·è¾“å…¥å­¦ç”Ÿä¸ªæ•°ï¼š";
+    cin>>n;
+    L->next=NULL;
+    LNode *p,*r;                 //pæŒ‡å‘åˆšå»ºç«‹çš„èŠ‚ç‚¹ï¼ŒræŒ‡å‘é“¾è¡¨æœ€åä¸€ä¸ªèŠ‚ç‚¹
+    r=L;
+    cout<<"åˆ†åˆ«è¾“å…¥æ¯ä¸ªå­¦ç”Ÿçš„å­¦å·ã€å§“åå’Œè¯­æ–‡ã€æ•°å­¦ã€è‹±è¯­ä¸‰ç§‘çš„æˆç»©"<<endl;
+    for(int i=0; i<n; i++)
+    {
+        p=new LNode;
+        p->next=NULL;
+        cin>>p->stu.id>>p->stu.name>>p->stu.score[0]>>p->stu.score[1]>>p->stu.score[2];   //ä¾æ¬¡è¾“å…¥å­¦ç”Ÿæ•°æ®
+        p->stu.score[3]=p->stu.score[0]+p->stu.score[1]+p->stu.score[2];        //æ€»åˆ†ä¸å¦å¤–è¾“å…¥ï¼Œç”±å‰ä¸‰ç§‘çš„æ€»å’Œå‘ˆç°
+        r->next=p;
+        r=p;
+    }
 }
 
-void search_id()//°´ÕÕÑ§ÉúÑ§ºÅ½øĞĞ²éÑ¯
+void Delete_Node(LinkList &L)
 {
-	cout << "ÇëÊäÈëÄãÒª²éÑ¯µÄÑ§ÉúµÄÑ§ºÅ£º";
-	char id[8];
-	cin >> id;
-	for (int i = 1; i <= num; i++)
-	{
-		if (strcmp(stu[i].id, id) == 0)
-		{
-			cout << "Ñ§ºÅ     ĞÕÃû     ÊıÑ§     Ó¢Óï" << endl;
-			printf("%-9s%-9s%-9d%-9d\n", stu[i].id, stu[i].name, stu[i].Math_score, stu[i].English_score);
-		}
-	}
-	cout << endl;
+    LNode *p=L->next,*pre=L;
+    char id[10];
+    cout<<"è¯·è¾“å…¥éœ€è¦åˆ é™¤çš„å­¦ç”Ÿçš„å­¦å·ï¼š";
+    cin>>id;
+    while(p)
+    {
+        if(strcmp(p->stu.id,id)==0)//åˆ¤æ–­å­¦å·æ˜¯å¦ç›¸åŒ
+        {
+            pre->next=p->next;//ç›¸åŒåˆ™æŠŠè¿™ä¸ªèŠ‚ç‚¹åˆ é™¤
+            break;
+        }
+        else
+        {
+            pre=pre->next;//ä¸ç›¸åŒåˆ™éå†ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
+            p=p->next;
+        }
+    }
+    if(p!=NULL)
+        cout<<"åˆ é™¤æˆåŠŸ!"<<endl;
+    delete p;
 }
 
-void delete_date()//É¾³ıÑ§ÉúĞÅÏ¢
+void Search(LinkList L)
 {
-	cout << "ÇëÊäÈëÄãÒªÉ¾³ıµÄÑ§ÉúµÄÑ§ºÅ£º";
-	char id[8];
-	cin >> id;
-	int i;
-	for ( i = 1; i <= num; i++)
-	{
-		if (strcmp(stu[i].id, id) == 0)
-		{
-			for (int j = i; j <= num; j++)
-			{
-				stu[j] = stu[j + 1];
-			}
-			cout << "É¾³ı³É¹¦" << endl;
-			num--;
-		}
-	}
-	cout << endl;
+    int selection;
+    cout<<"ä¸‹é¢è¿›è¡ŒæŸ¥æ‰¾æ“ä½œ 1.æŒ‰å­¦å·æŸ¥æ‰¾ 2.æŒ‰å§“åæŸ¥æ‰¾"<<endl;
+    cout<<"è¯·è¾“å…¥ï¼ˆ1-2ï¼‰ï¼š";
+    cin>>selection;
+    switch(selection)
+    {
+    case 1:            //æŒ‰ç…§å­¦å·æŸ¥æ‰¾
+    {
+        string id;
+        cout<<"è¯·è¾“å…¥éœ€è¦æŸ¥è¯¢çš„å­¦ç”Ÿå­¦å·:";
+        cin>>id;
+        LNode *p=L->next;
+        while(p)
+        {
+            if(p->stu.id==id)//åˆ¤æ–­å­¦å·æ˜¯å¦ç›¸åŒ
+            {
+                cout<<"è¯¥å­¦ç”Ÿä¿¡æ¯å¦‚ä¸‹ï¼š"<<endl;//ç›¸åŒåˆ™è¾“å‡ºè¯¥å­¦ç”Ÿçš„æ‰€æœ‰ä¿¡æ¯
+                print_Node(p);
+                break;
+            }
+            p=p->next;//ä¸ç›¸åŒåˆ™éå†ä¸‹ä¸€ä¸ªç»“ç‚¹
+        }
+        if(!p) cout<<"æ— è¯¥å­¦ç”Ÿä¿¡æ¯"<<endl;
+        break;
+    }
+    case 2:            //æŒ‰ç…§å§“åæŸ¥æ‰¾
+    {
+        string name;
+        cout<<"è¯·è¾“å…¥éœ€è¦æŸ¥è¯¢çš„å­¦ç”Ÿå§“å:";
+        cin>>name;
+        LNode *p=L->next;
+        while(p)
+        {
+            if(p->stu.name==name)//åˆ¤æ–­å§“åæ˜¯å¦ç›¸åŒ
+            {
+                cout<<"è¯¥å­¦ç”Ÿä¿¡æ¯å¦‚ä¸‹ï¼š"<<endl;//ç›¸åŒåˆ™è¾“å‡ºè¯¥å­¦ç”Ÿçš„æ‰€æœ‰ä¿¡æ¯
+                print_Node(p);
+                break;
+            }
+            p=p->next;//ä¸ç›¸åŒåˆ™éå†ä¸‹ä¸€ä¸ªç»“ç‚¹
+        }
+        if(!p) cout<<"æ— è¯¥å­¦ç”Ÿä¿¡æ¯"<<endl;
+        break;
+    }
+    }
 }
 
-void sort_date()//°´ÕÕÑ§ÉúÄ³¿ÆµÄ³É¼¨½øĞĞÓÉ´óµ½Ğ¡ÅÅĞò
+void Modify_Node(LinkList &L)  //4.ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯
 {
-	cout << "ÇëÊäÈëÅÅĞò¿ÆÄ¿±ê×¼" << endl;
-	cout << "ÊıÑ§Çë°´1£»Ó¢ÓïÇë°´2" << endl;
-	int n;
-	Student student;
-	cin >> n;
-	switch (n)
-	{
-	case 1: {
-		for (int i = 1; i < num; i++)
-		{
-			if (stu[i].Math_score < stu[i + 1].Math_score)
-			{
-				student = stu[i];
-				stu[i] = stu[i + 1];
-				stu[i + 1] = student;
-			}
-		}
-		cout << "ÅÅĞò³É¹¦" << endl;
-		break;
-	}
-	case 2: {
-		for (int i = 1; i < num; i++)
-		{
-			if (stu[i].English_score < stu[i + 1].English_score)
-			{
-				student = stu[i];
-				stu[i] = stu[i + 1];
-				stu[i + 1] = student;
-			}
-		}
-		cout << "ÅÅĞò³É¹¦" << endl;
-		break;
-	}
-	default:cout << "ÊäÈë´íÎó" << endl; break;
-	}
+    cout<<"è¯·è¾“å…¥éœ€è¦ä¿®æ”¹çš„å­¦ç”Ÿå­¦å·ï¼š";
+    string id;
+    cin>>id;
+    LNode *p=L->next;
+    while(p)//å¯¹é“¾è¡¨è¿›è¡Œéå†
+        if(p->stu.id!=id)//åˆ¤æ–­å­¦å·æ˜¯å¦ç›¸åŒ
+            p=p->next;//ä¸åŒåˆ™éå†ä¸‹ä¸€ä¸ªç»“ç‚¹
+        else break;
+    if(!p)
+    {
+        cout<<"è¯¥å­¦å·å­¦ç”Ÿä¸å­˜åœ¨ï¼Œæ— æ³•è¿›è¡Œä¿®æ”¹"<<endl;
+        return ;
+    }
+    cout<<"è¯·åˆ†åˆ«è¾“å…¥æ–°çš„å­¦ç”Ÿä¿¡æ¯ï¼š";
+    cin>>p->stu.id>>p->stu.name>>p->stu.score[0]>>p->stu.score[1]>>p->stu.score[2]; //è¾“å…¥æ–°çš„å­¦ç”Ÿä¿¡æ¯
+    p->stu.score[3]=p->stu.score[0]+p->stu.score[1]+p->stu.score[2];                    //è®¡ç®—å‡ºæ–°çš„æ€»åˆ†
+    cout<<"ä¿®æ”¹æˆåŠŸï¼"<<endl;
 }
 
-void insert_date()//²åÈëÑ§ÉúĞÅÏ¢
+void Add(LinkList &L)
 {
-	cout << "ÇëÊäÈëÒª²åÈëµÄÎ»ÖÃ£º";
-	int n;
-	Student student;
-	cin >> n;
-	if (n<1 || n>num + 1)
-	{
-		cout << "ÊäÈë´íÎó" << endl;
-		return;
-	}
-	else
-	{
-		printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÑ§ºÅ:");
-		scanf_s("%s", &student.id, 8);
-		printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÃû×Ö:");
-		scanf_s("%s", &student.name, 20);
-		printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÊıÑ§³É¼¨:");
-		scanf_s("%d", &student.Math_score);
-		printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÓ¢Óï³É¼¨:");
-		scanf_s("%d", &student.English_score);
-	}
-	for (int i = num; i >= n; i--)
-	{
-		stu[i + 1] = stu[i];
-	}
-	stu[n] = student;
-	num++;
+    LNode *p=new LNode;
+    cout<<"è¯·åˆ†åˆ«è¾“å…¥æ–°å¢å­¦ç”Ÿçš„å­¦å·ã€å§“åå’Œè¯­æ–‡ã€æ•°å­¦ã€è‹±è¯­ä¸‰ç§‘æˆç»©"<<endl;
+    cin>>p->stu.id>>p->stu.name;
+    cin>>p->stu.score[0]>>p->stu.score[1]>>p->stu.score[2];
+    p->stu.score[3]=p->stu.score[0]+p->stu.score[1]+p->stu.score[2];
+    p->next=L->next;//å¤´æ’æ³•åˆ›å»ºä¸€ä¸ªæ–°çš„ç»“ç‚¹
+    L->next=p;
+    cout<<"å¢æ·»æˆåŠŸï¼";
 }
 
-void save_date()//¶ÔÏÖÓĞÑ§ÉúĞÅÏ¢½øĞĞ±£´æ
+
+void Statistic(LinkList L)  //6.ç»Ÿè®¡å­¦ç”Ÿèµ„æ–™
 {
-	FILE* fp;
-	fopen_s(&fp, "shuju.txt", "w");//ÒÔÖ»Ğ´·½Ê½´ò¿ªÎÄ¼ş
-	if (NULL == fp)
-	{
-		printf("Failed to open the file !\n");
-		exit(0);
-	}
-	for (int i = 1; i <= num; i++)
-	{
-		fprintf(fp, "%s %s %d %d\n", stu[i].id, stu[i].name, stu[i].Math_score, stu[i].English_score);//¶ÔÎÄ¼ş½øĞĞĞ´Èë
-	}
-	fclose(fp);//¹Ø±ÕÎÄ¼ş
+    LNode* p;
+    p = L->next;
+    int n = 0;
+    cout << "è¯·è¾“å…¥æ‚¨è¦ç»Ÿè®¡çš„ç§‘ç›®ï¼š1.è¯­æ–‡ 2.æ•°å­¦ 3.è‹±è¯­ 4.æ€»åˆ†" << endl;
+    int opt;
+    cin >> opt;
+    cout << "è¯·è¾“å…¥æ‚¨è¦ç»Ÿè®¡çš„åˆ†æ•°æ®µï¼ˆä¾æ¬¡è¾“å…¥æœ€ä½åˆ†å’Œæœ€é«˜åˆ†ï¼Œä¸­é—´ç”¨ç©ºæ ¼é—´éš”ï¼‰ï¼š";
+    int min, max;
+    cin >> min >> max;//è¾“å…¥æœ€ä½åˆ†å’Œæœ€é«˜åˆ†
+    switch (opt)
+    {
+    case 1:
+    {
+        while (p)
+        {
+            if (p->stu.score[0] >= min && p->stu.score[0] <= max)//åˆ¤æ–­è¯¥ç”Ÿè¯¥ç§‘åˆ†æ•°æ˜¯å¦ä½äºè¿™ä¸ªåˆ†æ•°æ®µ
+                n++;
+            p = p->next;
+        }
+    }
+    case 2:
+    {
+        while (p)
+        {
+            if (p->stu.score[1] >= min && p->stu.score[1] <= max)//åˆ¤æ–­è¯¥ç”Ÿè¯¥ç§‘åˆ†æ•°æ˜¯å¦ä½äºè¿™ä¸ªåˆ†æ•°æ®µ
+                n++;
+            p = p->next;
+        }
+    }
+    case 3:
+    {
+        while (p)
+        {
+            if (p->stu.score[2] >= min && p->stu.score[2] <= max)//åˆ¤æ–­è¯¥ç”Ÿè¯¥ç§‘åˆ†æ•°æ˜¯å¦ä½äºè¿™ä¸ªåˆ†æ•°æ®µ
+                n++;
+            p = p->next;
+        }
+    }
+    case 4:
+    {
+        while (p)
+        {
+            if (p->stu.score[3] >= min && p->stu.score[3] <= max)//åˆ¤æ–­è¯¥ç”Ÿæ€»åˆ†æ•°æ˜¯å¦ä½äºè¿™ä¸ªåˆ†æ•°æ®µ
+                n++;
+            p = p->next;
+        }
+    }
+    }
+    cout << "å¤„äºè¯¥åˆ†æ•°æ®µçš„å­¦ç”Ÿçš„äººæ•°ä¸ºï¼š" << n << endl;
+
 }
 
-void add_date()//Ôö¼ÓÑ§ÉúĞÅÏ¢
+void SortList(LinkList &L)
 {
-	Student student;
-	printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÑ§ºÅ:");
-	scanf_s("%s", &student.id, 8);
-	printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÃû×Ö:");
-	scanf_s("%s", &student.name, 20);
-	printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÊıÑ§³É¼¨:");
-	scanf_s("%d", &student.Math_score);
-	printf("ÇëÊäÈë¸ÃÑ§ÉúµÄÓ¢Óï³É¼¨:");
-	scanf_s("%d", &student.English_score);
-	stu[num + 1] = student;
-	num++;
-	save_date();
-	cout << "Ôö¼Ó³É¹¦" << endl;
-	cout << endl;
+    int t1,t2;
+    cout<<"è¯·é€‰æ‹©éœ€è¦æ’åºçš„ç§‘ç›®(1-4)ï¼š1.è¯­æ–‡ 2.æ•°å­¦ 3.è‹±è¯­ 4.æ€»åˆ†"<<endl;
+    cin>>t1;
+    cout<<"è¯·é€‰æ‹©æ’åºæ–¹æ³•(1-2)ï¼š1.å‡åº 2.é™åº"<<endl;
+    cin>>t2;
+    LNode *pre,*p,*r;
+    r=L->next;
+    L->next=NULL;
+    switch(t2)
+    {
+    case 1:     //ä»å°åˆ°å¤§æ’åˆ—
+    {
+        while(r)//å†’æ³¡æ³•æ’åº
+        {
+            pre=L;
+            p=L->next;
+            while(p&&r->stu.score[t1-1]>p->stu.score[t1-1])
+            {
+                pre=pre->next;
+                p=p->next;
+            }
+            pre->next=r;
+            r=r->next;
+            pre->next->next=p;
+        }
+    }
+    case 2:            //ä»å¤§åˆ°å°æ’åˆ—
+    {
+        while(r)//å†’æ³¡æ’åº
+        {
+            pre=L;
+            p=L->next;
+            while(p&&r->stu.score[t1-1]<p->stu.score[t1-1])
+            {
+                pre=pre->next;
+                p=p->next;
+            }
+            pre->next=r;
+            r=r->next;
+            pre->next->next=p;
+        }
+    }
+    }
+    cout<<"æ’åºå®Œæˆï¼";
 }
 
-void delete_date_from_datebase()//´ÓÊı¾İ¿âÖĞÉ¾³ıÑ§ÉúĞÅÏ¢
+void Save(LinkList L)
 {
-	cout << "ÇëÊäÈëÄúÒªÉ¾³ıµÄÑ§ÉúµÄÑ§ºÅ£º";
-	char id[8];
-	scanf_s("%s", id, 8);
-	for (int i = 1; i <= num; i++)
-	{
-		if (strcmp(stu[i].id, id) == 0)
-		{
-			for (int j = i; j <= num; j++)
-			{
-				stu[j] = stu[j + 1];
-			}
-		}
-	}
-	num--;
-	save_date();
-	cout << "É¾³ı³É¹¦" << endl;
-	cout << endl;
+    FILE *fp;
+    LNode *p;
+    int count=0;
+    fp=fopen("file","wb");//æ‰“å¼€æ–‡ä»¶ï¼Œä¸å­˜åœ¨æ–‡ä»¶åˆ™æ–°å»ºä¸€ä¸ªæ–‡ä»¶
+    if(fp==NULL)
+    {
+        cout<<"æ–‡ä»¶æ‰“å¼€å¤±è´¥ï¼"<<endl;
+        getchar();
+        return;
+    }
+    p=L->next;
+    while(p)           //é€šè¿‡å¾ªç¯æ“ä½œï¼Œå°†å­¦ç”Ÿä¿¡æ¯ä¸€ä¸€å­˜å…¥fileæ–‡ä»¶ä¸­
+    {
+        if(fprintf(fp,"%s %s %d %d %d %d\n",p->stu.id,p->stu.name,p->stu.score[0],p->stu.score[1],p->stu.score[2],p->stu.score[3]))
+        {
+            p=p->next;
+            count++;
+        }
+        else break;
+    }
+    if(count)
+        cout<<"å·²ä¿å­˜"<<count<<"ä¸ªå­¦ç”Ÿä¿¡æ¯"<<endl;    //è¾“å‡ºå·²ç»ä¿å­˜å­¦ç”Ÿä¸ªæ•°
+    else cout<<"æ²¡æœ‰å­¦ç”Ÿä¿¡æ¯è¢«ä¿å­˜"<<endl;
+    fclose(fp);
 }
 
-void date_change()
+void Read_in(LinkList &L)
 {
-	cout << "ÇëÊäÈëÄãÒªĞŞ¸ÄµÄÑ§ÉúµÄÑ§ºÅ£º";
-	char id[8];	
-	scanf_s("%s", id, 8);
-	cout << "ÇëÊäÈëÄúÒªĞŞ¸ÄµÄÏîÄ¿£º1.Ñ§ºÅ 2.ĞÕÃû 3.ÊıÑ§³É¼¨ 4.Ó¢Óï³É¼¨" << endl;
-	int a;
-	cin >> a;
-	for (int i = 1; i <= num; i++)
-	{
-		if (strcmp(stu[i].id, id) == 0)
-		{
-			switch (a)
-			{
-			case 1: {
-				cout << "ÇëÊäÈëĞŞ¸ÄºóµÄÑ§ÉúÑ§ºÅ£º";
-				char id[8];
-				scanf_s("%s", id, 8);
-				strcpy_s(stu[i].id, id);
-				break;
-			}
-			case 2: {
-				cout << "ÇëÊäÈëĞŞ¸ÄºóµÄÑ§ÉúµÄĞÕÃû£º";
-				char name[20];
-				scanf_s("%s", name, 20);
-				strcpy_s(stu[i].name, name);
-				break;
-			}
-			case 3: {
-				cout << "ÇëÊäÈëĞŞ¸Äºó¸ÃÑ§ÉúµÄÊıÑ§³É¼¨£º";
-				int math;
-				cin >> math;
-				stu[i].Math_score = math;
-				break;
-			}
-			case 4: {
-				cout << "ÇëÊäÈëĞŞ¸Äºó¸ÃÑ§ÉúµÄÓ¢Óï³É¼¨£º";
-				int english;
-				cin >> english;
-				stu[i].English_score = english;
-				break;
-			}
-			}
-		}
-	}
-	save_date();
-	cout << "ĞŞ¸Ä³É¹¦" << endl;
-	cout << endl;
+    FILE *fp;
+    fp=fopen("file","rb");//æ‰“å¼€æ–‡ä»¶
+    int n;
+    cout<<"è¯·è¾“å…¥éœ€è¦è¯»å…¥å­¦ç”Ÿçš„ä¸ªæ•°ï¼š";
+    cin>>n;
+    LNode *p,*r;
+    r=L;
+    for(int i=0; i<n; i++)
+    {
+        p=new LNode;
+        p->next=NULL;
+        fscanf(fp,"%s %s %d %d %d %d",p->stu.id,p->stu.name,&p->stu.score[0],&p->stu.score[1],&p->stu.score[2],&p->stu.score[3]);//å¯¹æ–‡ä»¶ä¸­çš„æ•°æ®è¿›è¡Œè¯»å–
+        r->next=p;
+        r=p;
+    }
+    fclose(fp);
+}
+
+void Help()
+{
+    printf("    **********************************************\n");
+    cout << "            å¸®åŠ©æ–‡æ¡£ï¼ˆé¦–æ¬¡ä½¿ç”¨å‰å¿…è¯»ï¼‰        " << endl;
+    cout << "     1.é¦–æ¬¡ä½¿ç”¨è¯·å…ˆåˆ›å»ºä¸€ä¸ªæ–°çš„å­¦ç”Ÿä¿¡æ¯åº“      " << endl;
+    cout << "     2.æ¯æ¬¡ä¿®æ”¹æ•°æ®åè¯·ä¿å­˜è¿›æ–‡æ¡£ï¼Œä»¥é˜²æ–‡ä»¶ä¸¢å¤±" << endl;
+    cout << "     3.æŒ‰ç…§èœå•æç¤ºé”®å…¥æ•°å­—ä»£å·                " << endl;
+    printf("    **********************************************\n");
+    cout << endl;
 }
 
 int main()
 {
-	while (1)
-	{
-		printf_menu();
-		cout << "ÇëÑ¡Ôñ²Ù×÷Ñ¡Ïî£º";
-		int opt;
-		cin >> opt;
-		switch (opt)
-		{
-		case 1:Input_Date(); break;
-		case 2:Put_Date(); break;
-		case 3:search_name(); break;
-		case 4:search_id(); break;
-		case 5:delete_date(); break;
-		case 6:sort_date(); break;
-		case 7:insert_date(); break;
-		case 8:save_date(); break;
-		case 9:add_date(); break;
-		case 10:delete_date_from_datebase(); break;
-		case 11:date_change(); break;
-		case 12:return 0;
-		}
-	}
-	return 0;
+    printf_menu();  //æ“ä½œèœå•
+    int operation;
+    LinkList L=new LNode;
+    L->next=NULL;
+    do
+    {
+        cout<<endl<<endl;
+        cout<<"è¯·è¾“å…¥éœ€è¦è¿›è¡Œçš„æ“ä½œï¼š";
+        cin>>operation;
+        switch(operation)
+        {
+        case 1:
+            CreateList(L);
+            break;     //1.ç™»è®°å­¦ç”Ÿä¿¡æ¯
+        case 2:
+            Delete_Node(L);
+            break;    //2.åˆ é™¤å­¦ç”Ÿä¿¡æ¯
+        case 3:
+            Search(L);
+            break;         //3.æŸ¥è¯¢å­¦ç”Ÿä¿¡æ¯
+        case 4:
+            Modify_Node(L);
+            break;    //4.ä¿®æ”¹å­¦ç”Ÿä¿¡æ¯
+        case 5:
+            Add(L);
+            break;    //5.å¢åŠ å­¦ç”Ÿä¿¡æ¯
+        case 6:
+            Statistic(L);
+            break;      //6.ç»Ÿè®¡å­¦ç”Ÿä¿¡æ¯
+        case 7:
+            SortList(L);
+            break;       //7.æ’åºå­¦ç”Ÿèµ„æ–™
+        case 8:
+            PrintList(L);
+            break;      //8.è¾“å‡ºå­¦ç”Ÿä¿¡æ¯
+        case 9:
+            Read_in(L);
+            break;        //9.ä»æ–‡ä»¶è¯»å…¥å­¦ç”Ÿä¿¡æ¯
+        case 10:
+            Save(L);
+            break;      //10.ä¿å­˜å­¦ç”Ÿä¿¡æ¯
+        case 11:
+            Help();
+            break;      //è¾“å‡ºå¸®åŠ©æ–‡æ¡£
+        case 12:
+            return 0;
+            break;                   //0.é€€å‡ºç³»ç»Ÿ
+        }
+    }
+    while(operation);
 }
